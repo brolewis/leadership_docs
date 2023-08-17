@@ -5,17 +5,23 @@ description = "Lewis Leadership Docs"
 authors = ["Lewis Franklin <github@brolewis.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.9"
 
-[tool.poetry.dev-dependencies]
-jgt-tools = {version = "^0.2.3", extras = ["build_docs"]}
+[tool.poetry.group.dev.dependencies]
+jgt-tools = {version = "^0.6.0", extras = ["build_docs"]}
+sphinx = "<7.0"
 
 [tool.jgt_tools]
 env_setup_commands = [
     "poetry run pip install --upgrade pip<19",
     "poetry install"
 ]
-doc_build_types = []
+build_docs_commands = [
+    'echo "Building {PACKAGE_NAME} docs"',
+    "find . -maxdepth 1 -name *.rst -exec cp {{}} {DOCS_WORKING_DIRECTORY} \\;",
+    "cp {BASE_DIR}/.jgt_tools.index {BASE_DIR}/{DOCS_WORKING_DIRECTORY}/index.rst",
+    "poetry run sphinx-build -c {DOCS_WORKING_DIRECTORY} -aEW {DOCS_WORKING_DIRECTORY} {DOCS_OUTPUT_DIRECTORY}",
+]
 
 [build-system]
 requires = ["poetry>=0.12"]
